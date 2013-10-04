@@ -1,0 +1,16 @@
+/* 
+    Document   : custom
+    Created on : 02 Jul 2013, 8:44:29 PM
+    Author     : nguni52
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+fieldset label.error {
+    float: right;
+    color: #F00;
+    width: 250px;
+}
+section.viewinvestor label {
+    margin-top: 0;
+}

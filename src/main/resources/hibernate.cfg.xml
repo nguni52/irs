@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+  <session-factory>
+    <mapping class="com.irs.user.User"/>
+    <mapping class="com.irs.user.Authority"/>
+    <mapping class="com.irs.trusteerole.TrusteeRole"/>
+    <mapping class="com.irs.trustee.Trustee"/>
+    <mapping class="com.irs.person.Person"/>
+    <mapping class="com.irs.assetmanager.AssetManager"/>
+    <mapping class="com.irs.address.PhysicalAddress"/>
+    <mapping class="com.irs.address.PostalAddress"/>
+    <mapping class="com.irs.investor.Investor"/>
+    <mapping class="com.irs.person.Person"/>
+    <mapping class="com.irs.person.Title" />
+    <mapping class="com.irs.role.Role" />
+    <mapping class="com.irs.employee.Employee" />
+  </session-factory>
+</hibernate-configuration>

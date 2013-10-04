@@ -1,0 +1,15 @@
+.collapsibleList li > input + * {
+ display: none;
+}
+ 
+.collapsibleList li > input:checked + * {
+ display: block;
+}
+
+.collapsibleList li > input {
+ display: none;
+}
+
+.collapsibleList fieldset legend label {
+ cursor: pointer; width: 250px;
+}

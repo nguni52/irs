@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+             xmlns:beans="http://www.springframework.org/schema/beans"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+                        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd">
+
+
+    <global-method-security pre-post-annotations="enabled">
+        <!-- AspectJ pointcut expression that locates our "post" method and applies security that way
+        <protect-pointcut expression="execution(* bigbank.*Service.post*(..))" access="ROLE_TELLER"/>
+        -->
+    </global-method-security>
+    
+    <http auto-config="false" use-expressions="true" access-denied-page="/accessdenied" entry-point-ref="authenticationEntryPoint">
+        <intercept-url pattern="/users/**" access="hasAnyRole('ROLE_ADMIN')"/>
+        <intercept-url pattern="/admin/**" access="hasAnyRole('ROLE_ADMIN')"/>
+        <logout invalidate-session="true" logout-success-url="/index" logout-url="/j_spring_security_logout" />
+        <custom-filter ref="authenticationFilter" position="FORM_LOGIN_FILTER"/>
+        <custom-filter ref="concurrencyFilter" position="CONCURRENT_SESSION_FILTER"/>
+        <session-management session-authentication-strategy-ref="sas"/>
+    </http>
+
+    <beans:bean id="authenticationFilter" class="com.irs.security.MyUsernamePasswordAuthenticationFilter">
+        <beans:property name="sessionAuthenticationStrategy" ref="sas" />
+        <beans:property name="authenticationManager" ref="authenticationManager" />
+        <beans:property name="authenticationFailureHandler" ref="customAuthenticationFailureHandler" />
+        <beans:property name="authenticationSuccessHandler" ref="customAuthenticationSuccessHandler" />
+    </beans:bean>
+
+    <!-- We just actually need to set the default failure url here -->
+    <beans:bean id="customAuthenticationFailureHandler" class="org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler">
+        <beans:property name="defaultFailureUrl" value="/login?error=true" />
+    </beans:bean>
+
+
+    <!-- We just actually need to set the default target url here -->
+    <beans:bean id="customAuthenticationSuccessHandler" class="com.irs.security.MySimpleUrlAuthenticationSuccessHandler">
+        <beans:property name="defaultTargetUrl" value="/index" />
+    </beans:bean>
+
+
+    <!-- The AuthenticationEntryPoint is responsible for redirecting the user to a particular page, like a login page,
+ 			whenever the server sends back a response requiring authentication -->
+    <!-- See Spring-Security Reference 5.4.1 for more info -->
+    <beans:bean id="authenticationEntryPoint"  class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
+        <beans:property name="loginFormUrl" value="/login" />
+    </beans:bean>
+
+    <authentication-manager alias="authenticationManager">
+        <authentication-provider>
+            <password-encoder hash="md5"/>
+            <jdbc-user-service data-source-ref="dataSource"/>
+        </authentication-provider>
+    </authentication-manager>
+
+    <beans:bean id="concurrencyFilter" class="org.springframework.security.web.session.ConcurrentSessionFilter">
+        <beans:property name="expiredUrl" value="/timeout" />
+        <beans:property name="sessionRegistry" ref="sessionRegistry" />
+    </beans:bean>
+
+    <beans:bean id="sas" class="org.springframework.security.web.authentication.session.ConcurrentSessionControlStrategy" >
+        <beans:property name="maximumSessions" value="1" />
+        <beans:constructor-arg name="sessionRegistry" ref="sessionRegistry" />
+    </beans:bean>
+
+    <beans:bean id="sessionRegistry" class="org.springframework.security.core.session.SessionRegistryImpl" />
+    
+</beans:beans>
